@@ -6,8 +6,6 @@
 // });
 
 import { contextBridge, ipcRenderer } from 'electron';
-
-// Type definitions for frontend
 export interface DownloadImageOptions {
   filename?: string;
   referer?: string;
@@ -15,7 +13,6 @@ export interface DownloadImageOptions {
   forceExtension?: string;
   convertToPng?: boolean;
 }
-
 export interface ElectronAPI {
   invoke: (channel: string, ...args: any[]) => Promise<any>;
   

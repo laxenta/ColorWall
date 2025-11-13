@@ -1,3 +1,4 @@
+// Fixed file ( more of a utility file now, im not changing the name, cz ehh i dont want to change imports, dont blame me)
 import axios from 'axios';
 
 const API_BASE_URL = 'https://pic.re';

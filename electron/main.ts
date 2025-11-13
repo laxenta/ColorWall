@@ -1,6 +1,8 @@
 import { app, BrowserWindow, Menu } from 'electron';
 import path from 'path';
-import isDev from 'electron-is-dev';
+// import isDev from 'electron-is-dev';
+// Force check for production
+const isDev = process.env.NODE_ENV !== 'production' && !app.isPackaged;
 import http from 'http';
 import { registerServices } from './ipc-loader';
 
@@ -47,21 +49,20 @@ async function findAvailablePort(startPort: number, maxAttempts = 10): Promise<n
   throw new Error(`No available ports found between ${startPort} and ${startPort + maxAttempts}`);
 }
 
-// Wait for Next.js dev server with retry and port fallback
 async function waitForNextServer(startPort: number, maxWaitTime = 60000): Promise<number> {
   const startTime = Date.now();
-  
+
   return new Promise<number>((resolve, reject) => {
     let currentPort = startPort;
     let portAttempts = 0;
     const maxPortAttempts = 10;
-    
+
     const checkServer = () => {
       if (Date.now() - startTime > maxWaitTime) {
         reject(new Error('Timeout waiting for Next.js server'));
         return;
       }
-      
+
       http
         .get(`http://localhost:${currentPort}`, (res) => {
           if (res.statusCode === 200) {
@@ -72,7 +73,7 @@ async function waitForNextServer(startPort: number, maxWaitTime = 60000): Promis
           }
         })
         .on('error', () => {
-          // Try next port if this one failed
+          // Try next port if this one(in dev mode lol)
           portAttempts++;
           if (portAttempts < maxPortAttempts) {
             currentPort++;
@@ -86,12 +87,12 @@ async function waitForNextServer(startPort: number, maxWaitTime = 60000): Promis
           }
         });
     };
-    
+
     checkServer();
   });
 }
 
-// Create main window
+// main window
 async function createMainWindow() {
   if (creatingWindow || mainWindow) return;
   creatingWindow = true;
@@ -112,67 +113,71 @@ async function createMainWindow() {
 
     if (isDev) {
       const startPort = Number(process.env.PORT ?? 3000);
-      console.log('🟡 Waiting for Next.js dev server...');
-      
+      console.log('DEV: AAAAAAA waiting for Next.js dev server...');
+
       try {
         const actualPort = await waitForNextServer(startPort, 60000);
-        console.log(`✅ Next.js is live on port ${actualPort}, launching Electron window!`);
         await mainWindow.loadURL(`http://localhost:${actualPort}`);
         mainWindow.webContents.openDevTools();
       } catch (error) {
         console.error('❌ Failed to connect to Next.js:', error);
-        // Show error page
-        mainWindow.loadURL(`data:text/html,<h1>Failed to start Next.js dev server</h1><p>${error}</p>`);
+        mainWindow.loadURL(`data:text/html,<h1>cunt start Next.js dev server</h1><p>${error}</p>`);
       }
     } else {
-      const indexPath = path.join(__dirname, '../out/index.html');
+      // Production ()
+      const indexPath = app.isPackaged
+        ? path.join(process.resourcesPath, 'app.asar', 'out', 'index.html')
+        : path.join(__dirname, '../out/index.html');
+
+      console.log('loaded:', indexPath);
+
+      // loadFile with proper protocol handling
       await mainWindow.loadFile(indexPath);
+
+      //DevTools for production ( me need it sometimes)
+      // mainWindow.webContents.openDevTools();
     }
 
     mainWindow.on('closed', () => {
       mainWindow = null;
     });
-
   } catch (error) {
-    console.error('❌ Failed to create window:', error);
+    console.error('win Creation failed:', error);
     mainWindow = null;
   } finally {
     creatingWindow = false;
   }
 }
 
-// App lifecycle
+// life
 app.on('ready', async () => {
   try {
     console.log('🚀 Starting application...');
-    
-    // 🎯 Auto-register all services as IPC handlers
+
+    // Auto-register all services as IPC handlers
     const servicesPath = path.join(__dirname, 'services');
-    console.log(`📂 Looking for services in: ${servicesPath}`);
-    
+    console.log(`services in: ${servicesPath}`);
+
     await registerServices(servicesPath);
-    
-    // Then create window
+    // create window
     await createMainWindow();
   } catch (error) {
     console.error('❌ Failed to initialize app:', error);
     app.quit();
   }
 });
-
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
   }
 });
-
 app.on('activate', () => {
   if (!mainWindow && !creatingWindow) {
     createMainWindow();
   }
 });
 
-// Handle crashes gracefully
+// exceptions and crashes
 process.on('uncaughtException', (error) => {
   console.error('Uncaught exception:', error);
 });
