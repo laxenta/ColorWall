@@ -4,7 +4,7 @@ import { ReactNode } from 'react';
 
 export const metadata: Metadata = {
   title: 'ColorWall',
-  description: 'Create vibrant color walls with Electron + Next.js',
+  description: 'Set Your favority wallpaper without any hassles lowkey and it\'s free. Made with Electron + Next.js',
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

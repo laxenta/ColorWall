@@ -1,3 +1,4 @@
+// unused
 import axios from 'axios';
 import { net } from 'electron';
 
@@ -24,7 +25,7 @@ export async function proxyImage(imageUrl: string): Promise<ProxyImageResult> {
   try {
     console.log(`🖼️ Proxying image: ${imageUrl}`);
     
-    // Try using electron's net module first (better for binary data)
+    //electron's net module first (better for binary data)
     const response = await net.fetch(imageUrl, {
       headers: {
         'User-Agent': 'AnimeWallpaperApp/1.0',
@@ -56,7 +57,7 @@ export async function proxyImage(imageUrl: string): Promise<ProxyImageResult> {
     };
 
   } catch (error: any) {
-    console.error('❌ Image proxy failed:', error.message);
+    console.error('proxy failed:', error.message);
     
     return {
       success: false,
@@ -70,8 +71,7 @@ export async function proxyImage(imageUrl: string): Promise<ProxyImageResult> {
  */
 export async function proxyMultipleImages(imageUrls: string[]): Promise<{ [url: string]: ProxyImageResult }> {
   const results: { [url: string]: ProxyImageResult } = {};
-  
-  // Process images in parallel with limited concurrency
+  // imgs in parallel with limited concurrency
   const concurrency = 5;
   const batches = [];
   

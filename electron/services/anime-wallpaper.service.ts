@@ -710,103 +710,87 @@ async function resolveWallpapersDownload(detailUrl: string): Promise<{ imageUrl:
     height: bestHeight || undefined,
   };
 }
-
+// Achieved: Good quality imgs, WE did it lol, scraped from a good wallpaper provider!!!! 
 async function resolveWallpaperFlareDownload(detailUrl: string): Promise<{ imageUrl: string; width?: number; height?: number } | null> {
   const absolute = absoluteUrl(detailUrl, 'https://www.wallpaperflare.com');
-  const { data } = await axios.get(absolute, {
-    headers: {
-      ...REQUEST_HEADERS,
-      Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
-      Referer: 'https://www.wallpaperflare.com/',
-      'Upgrade-Insecure-Requests': '1',
-    },
-    timeout: 20000,
-  });
+  
+  // First, try to fetch the download page by appending /download
+  const downloadPageUrl = `${absolute.replace(/\/$/, '')}/download`;
+  
+  try {
+    const { data: downloadData } = await axios.get(downloadPageUrl, {
+      headers: {
+        ...REQUEST_HEADERS,
+        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+        Referer: absolute,
+        'Upgrade-Insecure-Requests': '1',
+      },
+      timeout: 20000,
+    });
 
-  const $ = cheerio.load(data);
-
-  const directLink =
-    pickImageSource($('a[download]').attr('href')) ||
-    pickImageSource($('img[itemprop="contentUrl"]').attr('src')) ||
-    pickImageSource($('meta[property="og:image"]').attr('content')) ||
-    '';
-
-  if (!directLink) {
-    // continue trying to discover download links from the page
+    const $download = cheerio.load(downloadData);
+    
+    // Parse the high-res image from the download page
+    const showImg = $download('#show_img').attr('src') || '';
+    const contentUrlImg = $download('img[itemprop="contentUrl"]').attr('src') || '';
+    const highResImage = showImg || contentUrlImg;
+    
+    if (highResImage) {
+      // Parse resolution from the page
+      const widthSpan = $download('span[itemprop="width"] span[itemprop="value"]').text();
+      const heightSpan = $download('span[itemprop="height"] span[itemprop="value"]').text();
+      
+      const width = widthSpan ? parseInt(widthSpan, 10) : undefined;
+      const height = heightSpan ? parseInt(heightSpan, 10) : undefined;
+      
+      return {
+        imageUrl: absoluteUrl(highResImage, 'https://www.wallpaperflare.com'),
+        width: !isNaN(width!) ? width : undefined,
+        height: !isNaN(height!) ? height : undefined,
+      };
+    }
+  } catch (error) {
+    console.warn(`Failed to fetch download page, trying detail page: ${error}`);
   }
 
-  const metaDescription = $('meta[itemprop="description"]').attr('content') || '';
-  const originalResolution = parseResolution(metaDescription);
-
-  const candidates: Array<{ url: string; width?: number; height?: number }> = [];
-
-  $('a[href*="/download"]').each((_, element) => {
-    const rawHref = $(element).attr('href');
-    if (!rawHref) return;
-
-    const normalized = absoluteUrl(rawHref, 'https://www.wallpaperflare.com');
-    if (!normalized.includes('/download')) {
-      return;
-    }
-
-    const resFromHref = parseResolution(normalized);
-    const textContent = $(element).text();
-    const resFromText = parseResolution(textContent);
-
-    let candidateUrl = normalized;
-    let width = resFromHref.width ?? resFromText.width ?? originalResolution.width;
-    let height = resFromHref.height ?? resFromText.height ?? originalResolution.height;
-
-    if (!normalized.includes('/download/')) {
-      if (width && height) {
-        candidateUrl = `${normalized.replace(/\/$/, '')}/${width}x${height}`;
-      }
-    }
-
-    candidates.push({
-      url: candidateUrl,
-      width,
-      height,
+  // Fallback: try the detail page itself
+  try {
+    const { data } = await axios.get(absolute, {
+      headers: {
+        ...REQUEST_HEADERS,
+        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+        Referer: 'https://www.wallpaperflare.com/',
+        'Upgrade-Insecure-Requests': '1',
+      },
+      timeout: 20000,
     });
-  });
 
-  if (candidates.length === 0 && directLink) {
+    const $ = cheerio.load(data);
+    
+    // Try to get the image from the detail page
+    const detailImage = 
+      pickImageSource($('img[itemprop="contentUrl"]').attr('src')) ||
+      pickImageSource($('#vimg').attr('src')) ||
+      pickImageSource($('meta[property="og:image"]').attr('content')) ||
+      '';
+
+    if (!detailImage) {
+      return null;
+    }
+
+    // Parse resolution from meta description
+    const metaDescription = $('meta[itemprop="description"]').attr('content') || '';
+    const originalResolution = parseResolution(metaDescription);
+
     return {
-      imageUrl: directLink,
+      imageUrl: absoluteUrl(detailImage, 'https://www.wallpaperflare.com'),
       width: originalResolution.width,
       height: originalResolution.height,
     };
+  } catch (error) {
+    console.error(`Failed to resolve WallpaperFlare image: ${error}`);
+    return null;
   }
-
-  let bestCandidate = candidates[0] ?? null;
-  let bestPixels = 0;
-
-  candidates.forEach((candidate) => {
-    if (!candidate.url) return;
-
-    const width = candidate.width ?? originalResolution.width ?? 0;
-    const height = candidate.height ?? originalResolution.height ?? 0;
-    const pixels = (width || 0) * (height || 0);
-
-    if (pixels > bestPixels) {
-      bestPixels = pixels;
-      bestCandidate = candidate;
-    }
-  });
-
-  if (bestCandidate) {
-    return {
-      imageUrl: bestCandidate.url,
-      width: bestCandidate.width ?? originalResolution.width,
-      height: bestCandidate.height ?? originalResolution.height,
-    };
-  }
-
-  return {
-    imageUrl: directLink,
-    width: originalResolution.width,
-    height: originalResolution.height,
-  };
 }
 
 function absoluteUrl(href: string, base: string) {

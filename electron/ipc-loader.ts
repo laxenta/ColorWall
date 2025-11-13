@@ -9,38 +9,34 @@ interface ServiceModule {
 
 /**
  * Auto-loads all services from /services folder and registers them as IPC handlers
- * 
- * Example service file structure:
+ *
+ * for contributors: service file structure:
  * // services/wallpaper.service.ts
  * export async function setWallpaper(imagePath: string) { ... }
  * export async function getWallpaper() { ... }
  * 
- * These become IPC handlers:
- * - 'wallpaper:setWallpaper'
- * - 'wallpaper:getWallpaper'
+ *  These become IPC handlers:
+ * -'wallpaper:setWallpaper'
+ * -'wallpaper:getWallpaper'
  */
 export async function registerServices(servicesDir: string) {
   const serviceFiles = fs
     .readdirSync(servicesDir)
     .filter(file => file.endsWith('.service.js') || file.endsWith('.service.ts'));
-
-  console.log('🔌 Registering IPC services...');
-
+  console.log('Init process: Load IPC services...');
   for (const file of serviceFiles) {
     const servicePath = path.join(servicesDir, file);
     const serviceName = file.replace('.service.ts', '').replace('.service.js', '');
     
     try {
-      // Dynamic import
+      // dynamic
       const serviceModule: ServiceModule = await import(servicePath);
       
-      // Register each exported function as IPC handler
+      // register each exported function as IPC handler
       for (const [functionName, handler] of Object.entries(serviceModule)) {
-        // Skip non-functions and default exports
+        // non-functions and default exports
         if (typeof handler !== 'function' || functionName === 'default') continue;
-        
         const ipcChannel = `${serviceName}:${functionName}`;
-        
         ipcMain.handle(ipcChannel, async (_event, ...args) => {
           try {
             return await handler(...args);
@@ -49,15 +45,15 @@ export async function registerServices(servicesDir: string) {
             return { success: false, error: String(error) };
           }
         });
-        
-        console.log(`  ✅ ${ipcChannel}`);
+        // verify its working or no
+        console.log(`Running: ${ipcChannel}`);
       }
     } catch (error) {
-      console.error(`Failed to load service ${serviceName}:`, error);
+      console.error(`fail to load service ${serviceName}:`, error);
     }
   }
   
-  console.log('🎉 All services registered!\n');
+  console.log('Perfect, All services registered!\n');
 }
 
 // /**
@@ -87,6 +83,6 @@ export async function registerServices(servicesDir: string) {
 //       }
 //     });
     
-//     console.log(`✅ Registered: ${channelName}`);
+//     console.log(`${channelName}`);
 //   }
 // }

@@ -36,13 +36,13 @@
     "**/*.tsx",
     "**/*.cjs",
     "**/*.mjs",
-    "out/types/**/*.ts",
-    "out/dev/types/**/*.ts",
-    ".next/types/**/*.ts",
+    ".next/types/**/*.ts" // ✅ Only this one - Next.js default location
+    ,
     ".next/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",
-    "dist-electron"
+    "dist-electron",
+    "out"
   ]
 }

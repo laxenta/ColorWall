@@ -3,16 +3,34 @@
 	"version": "0.1.0",
 	"private": true,
 	"main": "dist-electron/main.js",
+	"author": "Laxenta Inc",
+	"description": "Anime wallpaper engine built on electron next ts thats it",
+	"license": "GPL-3.0",
+	"homepage": "https://github.com/laxenta/colorwall",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/laxenta/colorwall.git"
+	},
+	"keywords": [
+		"anime",
+		"wallpaper",
+		"engine",
+		"electron",
+		"next",
+		"ts"
+	],
 	"scripts": {
 		"dev": "concurrently \"pnpm dev:next\" \"pnpm dev:ts\" \"pnpm dev:electron\"",
+		"clean": "rimraf release out dist-electron .next",
 		"dev:next": "cross-env PORT=3000 next dev",
 		"dev:ts": "tsc -p electron/tsconfig.json --watch",
 		"dev:electron": "wait-on http://localhost:3000 dist-electron/main.js && nodemon --watch dist-electron --exec \"electron ./dist-electron/main.js\"",
-		"build": "pnpm build:renderer && pnpm build:electron",
-		"build:renderer": "next build",
+		"build": "pnpm build:next && pnpm build:electron",
+		"build:next": "next build",
 		"build:electron": "tsc -p electron/tsconfig.json",
 		"start": "next start",
-		"dist": "pnpm build && electron-builder"
+		"dist": "pnpm clean && pnpm build && electron-builder",
+		"test:prod": "cross-env NODE_ENV=production electron ./dist-electron/main.js"
 	},
 	"dependencies": {
 		"@types/cheerio": "^1.0.0",
@@ -24,17 +42,19 @@
 		"next": "^16.0.1",
 		"react": "^19.2.0",
 		"react-dom": "^19.2.0",
+		"rimraf": "^6.1.0",
 		"sharp": "^0.34.5",
 		"wallpaper": "^7.2.1"
 	},
 	"devDependencies": {
+		"@electron/asar": "^4.0.1",
 		"@types/node": "^24.10.1",
 		"@types/react": "^19.2.3",
 		"@types/react-dom": "^19.2.3",
 		"autoprefixer": "^10.4.22",
 		"concurrently": "^9.2.1",
 		"cross-env": "^10.1.0",
-		"electron": "^39.1.2",
+		"electron": "39.1.2",
 		"electron-builder": "^26.0.12",
 		"nodemon": "^3.1.11",
 		"postcss": "^8.5.6",
