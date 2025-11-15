@@ -41,7 +41,7 @@ export async function registerServices(servicesDir: string) {
           try {
             return await handler(...args);
           } catch (error) {
-            console.error(`❌ Error in ${ipcChannel}:`, error);
+            console.error(`error in ${ipcChannel}:`, error);
             return { success: false, error: String(error) };
           }
         });

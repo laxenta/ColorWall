@@ -8,6 +8,7 @@ exports.getRandomImage = getRandomImage;
 exports.fetchImageById = fetchImageById;
 exports.getTags = getTags;
 exports.getDirectImageUrl = getDirectImageUrl;
+// Fixed file ( more of a utility file now, im not changing the name, cz ehh i dont want to change imports, dont blame me)
 const axios_1 = __importDefault(require("axios"));
 const API_BASE_URL = 'https://pic.re';
 /**

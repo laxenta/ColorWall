@@ -12,7 +12,7 @@ const API_BASE_URL = 'https://pic.re';
 async function proxyImage(imageUrl) {
     try {
         console.log(`🖼️ Proxying image: ${imageUrl}`);
-        // Try using electron's net module first (better for binary data)
+        //electron's net module first (better for binary data)
         const response = await electron_1.net.fetch(imageUrl, {
             headers: {
                 'User-Agent': 'AnimeWallpaperApp/1.0',
@@ -39,7 +39,7 @@ async function proxyImage(imageUrl) {
         };
     }
     catch (error) {
-        console.error('❌ Image proxy failed:', error.message);
+        console.error('proxy failed:', error.message);
         return {
             success: false,
             error: error.message
@@ -51,7 +51,7 @@ async function proxyImage(imageUrl) {
  */
 async function proxyMultipleImages(imageUrls) {
     const results = {};
-    // Process images in parallel with limited concurrency
+    // imgs in parallel with limited concurrency
     const concurrency = 5;
     const batches = [];
     for (let i = 0; i < imageUrls.length; i += concurrency) {

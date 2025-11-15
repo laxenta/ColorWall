@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
-  // 🔥 ADD THESE TWO CRITICAL LINES:
+  // CRITICAL LINES:
   assetPrefix: './',
   trailingSlash: true,
 };

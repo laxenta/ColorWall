@@ -16,14 +16,14 @@ async function setWallpaperFromPath(imagePath) {
         return { success: true };
     }
     catch (error) {
-        console.error('Failed to set wallpaper:', error);
+        console.error('unable to set wallpaper, are you a windows user?:', error);
         const errorMessage = String(error ?? '');
         const needsFallback = errorMessage.includes('0x80070057') || errorMessage.toLowerCase().includes('parameter is incorrect');
         if (needsFallback) {
             try {
-                console.warn('Retrying wallpaper set with "fit" scale fallback');
+                console.warn('retry wallpaper set with "fit" scale fallback');
                 await (0, wallpaper_1.setWallpaper)(imagePath, { scale: 'fit' });
-                return { success: true, note: 'Fallback scale applied (fit)' };
+                return { success: true, note: 'fallback scale applied (fit)' };
             }
             catch (fallbackError) {
                 console.error('Fallback wallpaper set failed:', fallbackError);
@@ -37,7 +37,7 @@ async function setWallpaperFromPath(imagePath) {
                     console.error('PNG conversion fallback failed:', conversionError);
                     return {
                         success: false,
-                        error: `${errorMessage} | Fallback failed: ${String(fallbackError ?? '')} | PNG conversion failed: ${String(conversionError ?? '')}`,
+                        error: `${errorMessage} | UhOh; Fallback failed: ${String(fallbackError ?? '')} | Ooops!!!!!! PNG conversion failed: ${String(conversionError ?? '')}`,
                     };
                 }
             }
