@@ -1,6 +1,6 @@
-# 🎨 ColorWall
-
-> **A powerful desktop wallpaper manager with multi-source support, built with Next.js, Electron, and Tauri.**
+# ColorWall - By Laxenta Inc.
+## Upcoming in rust soon for small bundle size. 
+> **A cool desktop wallpaper manager with multi-source support, built with Next.js, Electron,**
 
 ![GitHub](https://img.shields.io/github/license/yourusername/ColorWall)
 ![Version](https://img.shields.io/badge/version-0.1.0-blue)
@@ -10,15 +10,16 @@
 ---
 
 ## ✨ Features
-
+# up coming - autochange after a period of time from a list of selected tags by you (or random)
 - **🌐 Multi-Source Wallpaper Aggregation** - Fetches from 7+ wallpaper sites
-- **🎭 Live2D Support** - Interactive anime wallpapers
-- **🖼️ Smart Caching** - Local image cache for offline access
-- **🔒 Proxy System** - Built-in image proxy for CORS bypass
-- **🎯 Advanced Filtering** - Search by tags, categories, and sources
-- **⚡ High Performance** - Powered by Next.js Turbopack
-- **🖥️ Native Desktop App** - Cross-platform Electron/Tauri support
-- **🎨 Beautiful UI** - Modern, responsive interface
+- ** Live2D Support** - Interactive anime wallpapers (not yet implemented)
+- ** QUICK WALLPAPER SETTING** - one click and that's it, boom a good wallpaper
+- ** Smart Caching** - Local image cache for offline access
+- ** Proxy System** - Built-in image proxy for CORS bypass
+- ** Advanced Filtering** - For the best results across all sites we scrape from
+- **⚡ Okay at Performance, just gpu heavy** 
+- ** Native Desktop App**
+- ** okayish UI**
 
 ---
 
@@ -36,7 +37,15 @@
 *Exclude tags for your preferences (ex put feet, for less feet)*
 
 ---
+---
 
+## 💬 Support
+
+- **Issues:** [GitHub Issues](https://github.com/yourusername/ColorWall/issues)
+- **Discord:** [Join our DISCORD COMMUNITY](https://discord.gg/9emnU25HaY)
+- **Email:** laxenta.inc@gmail.com
+
+---
 ## Quick Start
 ### Prerequisites
 
@@ -74,11 +83,11 @@ pnpm dist
 
 ## Multiple Wallpaper Sources (live upcoming soon lol)
 
-<table>
+<!-- <table>
   <tr>
     <td align="center">
       <img src="./assets/wplflare.png" width="80px"/><br/>
-      <b>MoeWalls</b>
+      <b>Wplfare</b>
     </td>
     <td align="center">
       <img src="./assets/source-wallpapers.png" width="80px"/><br/>
@@ -93,21 +102,21 @@ pnpm dist
       <b>Safebooru</b>
     </td>
   </tr>
-</table>
+</table> -->
 
-*+ 3 more sources with custom API integrations*
+*+ 3 more sources*
 
 ---
 
-## 🎯 Core Features Breakdown
+## Features Breakdown
 
-### 🔍 Intelligent Search
+### Intelligent Search
 - Multi-site parallel fetching
 - Tag-based filtering
 - Live2D animation support
 - Random wallpaper discovery
 
-### 💾 Smart Caching System
+### Smart Caching System
 ```
 AppData/Roaming/Electron/wallpaper-cache/
 ├── wallpaper-moewalls-*.png
@@ -119,7 +128,7 @@ AppData/Roaming/Electron/wallpaper-cache/
 - Cache size monitoring
 - One-click cache clearing
 - CORS bypass for restricted images
-- Batch image downloading
+- batch image downloading
 - accessibility checks
 - image URL resolution
 
@@ -137,15 +146,7 @@ AppData/Roaming/Electron/wallpaper-cache/
 | `pnpm clean` | Remove build artifacts |
 
 ---
-```
-✓ Next.js compiled successfully in 6.3s
-✓ TypeScript check passed in 6.8s
-✓ Static pages generated (3/3)
-✓ Installer size: ~450MB (includes Chromium runtime)
-```
-
 *Planning Tauri migration to reduce bundle size to <50MB*
-
 ---
 
 ## Known Issues
@@ -187,15 +188,6 @@ Contributions are welcome! Please:
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
----
-
-## 💬 Support
-
-- **Issues:** [GitHub Issues](https://github.com/yourusername/ColorWall/issues)
-- **Discord:** [Join our community](#)
-- **Email:** laxenta.inc@gmail.com
-
----
 
 ## 🌟 Acknowledgments
 
