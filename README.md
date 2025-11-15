@@ -32,8 +32,8 @@
 ![Wallpaper Preview](./assets/screenshot-2.png)
 *Full-screen wallpaper preview*
 
-![Settings Panel](./assets/screenshot-3.png)
-*Customizable settings and preferences*
+![Settings Panel](./assets/Capture.png)
+*Exclude tags for your preferences (ex put feet, for less feet)*
 
 ---
 
@@ -77,7 +77,7 @@ pnpm dist
 <table>
   <tr>
     <td align="center">
-      <img src="./assets/source-moewalls.png" width="80px"/><br/>
+      <img src="./assets/wplflare.png" width="80px"/><br/>
       <b>MoeWalls</b>
     </td>
     <td align="center">
